@@ -29,10 +29,10 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbxOnline = new System.Windows.Forms.ListBox();
             this.btnChatRoom = new System.Windows.Forms.Button();
             this.btnChat = new System.Windows.Forms.Button();
             this.btnQuit = new System.Windows.Forms.Button();
-            this.lbxOnline = new System.Windows.Forms.ListBox();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -45,6 +45,16 @@
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "当前在线";
+            // 
+            // lbxOnline
+            // 
+            this.lbxOnline.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbxOnline.FormattingEnabled = true;
+            this.lbxOnline.ItemHeight = 12;
+            this.lbxOnline.Location = new System.Drawing.Point(3, 17);
+            this.lbxOnline.Name = "lbxOnline";
+            this.lbxOnline.Size = new System.Drawing.Size(190, 391);
+            this.lbxOnline.TabIndex = 0;
             // 
             // btnChatRoom
             // 
@@ -74,16 +84,6 @@
             this.btnQuit.UseVisualStyleBackColor = true;
             this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
             // 
-            // lbxOnline
-            // 
-            this.lbxOnline.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbxOnline.FormattingEnabled = true;
-            this.lbxOnline.ItemHeight = 12;
-            this.lbxOnline.Location = new System.Drawing.Point(3, 17);
-            this.lbxOnline.Name = "lbxOnline";
-            this.lbxOnline.Size = new System.Drawing.Size(190, 391);
-            this.lbxOnline.TabIndex = 0;
-            // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -97,6 +97,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Main";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主界面";
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);

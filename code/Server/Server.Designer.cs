@@ -32,8 +32,8 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnQuit = new System.Windows.Forms.Button();
-            this.lbxServerDisplay = new System.Windows.Forms.ListBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.lbxServerDisplay = new System.Windows.Forms.ListBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -93,16 +93,6 @@
             this.btnQuit.UseVisualStyleBackColor = true;
             this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
             // 
-            // lbxServerDisplay
-            // 
-            this.lbxServerDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lbxServerDisplay.FormattingEnabled = true;
-            this.lbxServerDisplay.ItemHeight = 12;
-            this.lbxServerDisplay.Location = new System.Drawing.Point(3, 17);
-            this.lbxServerDisplay.Name = "lbxServerDisplay";
-            this.lbxServerDisplay.Size = new System.Drawing.Size(280, 207);
-            this.lbxServerDisplay.TabIndex = 1;
-            // 
             // groupBox1
             // 
             this.groupBox1.Controls.Add(this.lbxServerDisplay);
@@ -114,6 +104,16 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "状态信息";
             // 
+            // lbxServerDisplay
+            // 
+            this.lbxServerDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lbxServerDisplay.FormattingEnabled = true;
+            this.lbxServerDisplay.ItemHeight = 12;
+            this.lbxServerDisplay.Location = new System.Drawing.Point(3, 17);
+            this.lbxServerDisplay.Name = "lbxServerDisplay";
+            this.lbxServerDisplay.Size = new System.Drawing.Size(280, 207);
+            this.lbxServerDisplay.TabIndex = 1;
+            // 
             // Server
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -122,7 +122,6 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Server";
             this.Text = "Socket Server";
-            this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
