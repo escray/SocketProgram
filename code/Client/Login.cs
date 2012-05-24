@@ -61,13 +61,22 @@ namespace Client
             }
 
             var tcpClient = new TcpClient();
-            tcpClient.Connect(ipAddr, port);
-
-            if (!tcpClient.Connected)
+            try
             {
-                MessageBox.Show("", "", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                tcpClient.Connect(ipAddr, port);
+
+                if (!tcpClient.Connected)
+                {
+                    MessageBox.Show(@"TCP 连接未能成功建立", @"错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    return;
+                }
+            }
+            catch (SocketException se)
+            {
+                MessageBox.Show( se.Message, @"错误", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+            
 
             NetworkStream stream = tcpClient.GetStream();
             stream.Write(Encoding.Unicode.GetBytes(UserName), 0, Encoding.Unicode.GetBytes(UserName).Length);
@@ -76,17 +85,15 @@ namespace Client
             stream.Read(buffer, 0, buffer.Length);
             string connResult = Encoding.Unicode.GetString(buffer).TrimEnd('\0');
 
-
-
             if (connResult.Equals("cmd::Failed"))
             {
                 MessageBox.Show("用户名已被使用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
             }
             else if (connResult.Equals("cmd::Successful"))
             {
                 MessageBox.Show("登陆成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
-
             
             string serverSocket = ServerIPAddress + ":" + port;
 

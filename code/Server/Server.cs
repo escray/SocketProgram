@@ -176,7 +176,7 @@ namespace Server
                     }
                     catch (Exception)
                     {
-                        string errorMessage = string.Format("[系统消息]您刚才的内容没有发送成功。用户：{0} 已离线或者网络阻塞。", key);
+                        string errorMessage = string.Format("[系统消息]您刚才的内容没有发送成功。用户：{0} 已离线或者网络阻塞。", receive);
                         clientSocket.Send(Encoding.Unicode.GetBytes(errorMessage));
                     }
                 }

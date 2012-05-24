@@ -32,6 +32,13 @@ namespace Client
         public string UserName { get; set; }
         public string ServerSocket { get; set; }
 
+
+        public Button BroadCastButton { get { return btnChatRoom; } }
+        public Button ChatButton
+        {
+            get { return btnChat; }
+        }
+
         public Main()
         {
             InitializeComponent();
@@ -74,6 +81,7 @@ namespace Client
                                      Stream = Stream,
                                      UserName = UserName
                                  };
+            DisableChatButton();
 
             chat.Show();
         }
@@ -96,7 +104,16 @@ namespace Client
                                     Stream = Stream,
                                     UserName = UserName
                                 };
+
+            DisableChatButton();
+            
             chat.Show();
+        }
+
+        private void DisableChatButton()
+        {
+            btnChatRoom.Enabled = false;
+            btnChat.Enabled = false;
         }
 
         private void Main_Load(object sender, EventArgs e)
