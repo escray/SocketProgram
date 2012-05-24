@@ -122,6 +122,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Server";
             this.Text = "Socket Server";
+            this.Load += new System.EventHandler(this.Server_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);

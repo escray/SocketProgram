@@ -21,8 +21,6 @@ namespace Client
         private IPAddress ipAddr;
         private int port = 11000;
 
-        
-
         public string UserName
         {
             get { return tbxUserName.Text.Trim();  }
@@ -67,7 +65,6 @@ namespace Client
                 return;
             }
 
-
             var tcpClient = new TcpClient();
             tcpClient.Connect(ipAddr, port);
 
@@ -88,6 +85,7 @@ namespace Client
                 MessageBox.Show("用户名已被使用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
+            
             string serverSocket = ServerIPAddress + ":" + port;
 
             Main mainForm = new Main(UserName, serverSocket, stream);

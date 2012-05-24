@@ -30,7 +30,7 @@ namespace Server
         /// <summary>
         /// 保存所有客户端会话的字典表
         /// </summary>
-        private Dictionary<string, Socket> allUser = new Dictionary<string, Socket>(); 
+        private Dictionary<string, TcpClient> allUser = new Dictionary<string, TcpClient>(); 
 
         public Server()
         {
@@ -49,6 +49,7 @@ namespace Server
         public void TcpListenerStart()
         {
             tcpListener = new TcpListener(GetServerIPAddress(), port);
+            
             tcpListener.Start();
             Display("服务器启动，开始监听......");
 
@@ -63,24 +64,25 @@ namespace Server
             {
                 try
                 {
-                    var client = tcpListener.AcceptSocket();
-                    client.Receive(bytes);
+                    var client = tcpListener.AcceptTcpClient();
+                    var socket = client.Client;
+                    socket.Receive(bytes);
                     userName = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
 
                     if (allUser.Count != 0 && allUser.ContainsKey(userName))
                     {
-                        client.Send(Encoding.Unicode.GetBytes("cmd::Failed"));
+                        socket.Send(Encoding.Unicode.GetBytes("cmd::Failed"));
                     }
                     else
                     {
-                        client.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
+                        socket.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
                     }
 
                     allUser.Add(userName, client);
 
                     string log = string.Format("[系统消息]新用户 {0} 在 {1} 已连接，当前在线人数： {2}", userName, DateTime.Now, allUser.Count);
-                    Display(log);
 
+                    //Display(log);
                     var clientThread = new Thread(MessageTransfer);
                     clientThread.Start(userName);
                     SendMessageToAll(userName, log);
@@ -97,40 +99,13 @@ namespace Server
             
         }
 
-
-        private void ListenerClientConnect()
-        {
-            TcpClient client;
-            while (true)
-            {
-                try
-                {
-                    client = tcpListener.AcceptTcpClient();
-                }
-                catch (Exception)
-                {
-                    break;
-                }
-
-
-                var netStream = client.GetStream();
-                if (netStream.CanRead)
-                {
-                    byte[] bytes = new byte[client.ReceiveBufferSize];
-                    netStream.Read(bytes, 0, client.ReceiveBufferSize);
-                    userName = Encoding.Unicode.GetString(bytes);
-                }
-
-                var clientThread = new Thread(MessageTransfer);
-                clientThread.Start(userName);
-            }
-        }
-
         private void SendMessageToAll(string userName, string log)
         {
+            Display(log);
             foreach (var pair in allUser.Where(pair => pair.Key != userName))
             {
-                pair.Value.Send(Encoding.Unicode.GetBytes(log));
+                //pair.Value.Send(Encoding.Unicode.GetBytes(log));
+                pair.Value.Client.Send(Encoding.Unicode.GetBytes(log));
             }
         }
 
@@ -141,7 +116,7 @@ namespace Server
             {
                 return;
             }
-            Socket clientSocket = allUser[key];
+            Socket clientSocket = allUser[key].Client;
             while (true)
             {
                 try
@@ -169,15 +144,20 @@ namespace Server
                     if (receive.StartsWith("cmd::BroadCast"))
                     {
                         clientSocket.Receive(bytes);
-                        SendMessageToAll(key, bytes.ToString());
+                        SendMessageToAll(key, Encoding.Unicode.GetString(bytes));
                         continue;
                     }
                     // second datagram
+                    // here has a question fro transfer message 2012-5-24 12:14
                     clientSocket.Receive(bytes);
                     try
                     {
                         // 转发
-                        allUser[key].Send(bytes);
+                        var receiveSocket = allUser[receive].Client;
+                        if (receiveSocket != null && receiveSocket.Connected)
+                        {
+                            receiveSocket.Send(bytes);
+                        }
                     }
                     catch (Exception)
                     {
@@ -187,7 +167,10 @@ namespace Server
                 }
                 catch (SocketException)
                 {
-                    allUser.Remove(key);
+                    if (allUser.ContainsKey(key))
+                    {
+                        allUser.Remove(key);
+                    }
                     string log = string.Format("[系统消息]用户 {0} 的客户端在 {1} 意外终止！当前在线人数：{2}", key, DateTime.Now, allUser.Count);
                     SendMessageToAll(string.Empty, log);
                     Thread.CurrentThread.Abort();
@@ -222,9 +205,10 @@ namespace Server
             
             if (allUser.Count == 0) return;
 
-            foreach (var socket in allUser.Values)
+            foreach (var client in allUser.Values)
             {
-                socket.Shutdown(SocketShutdown.Both);
+                client.Client.Shutdown(SocketShutdown.Both);
+                client.Close();
             }
             allUser.Clear();
             allUser = null;
@@ -324,6 +308,11 @@ namespace Server
         {
             CloseTcpListener();
             Close();
+        }
+
+        private void Server_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

@@ -33,6 +33,7 @@
             this.btnChatRoom = new System.Windows.Forms.Button();
             this.btnChat = new System.Windows.Forms.Button();
             this.btnQuit = new System.Windows.Forms.Button();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -58,19 +59,19 @@
             // 
             // btnChatRoom
             // 
-            this.btnChatRoom.Location = new System.Drawing.Point(11, 443);
+            this.btnChatRoom.Location = new System.Drawing.Point(4, 440);
             this.btnChatRoom.Name = "btnChatRoom";
-            this.btnChatRoom.Size = new System.Drawing.Size(51, 23);
+            this.btnChatRoom.Size = new System.Drawing.Size(40, 23);
             this.btnChatRoom.TabIndex = 1;
-            this.btnChatRoom.Text = "聊天室";
+            this.btnChatRoom.Text = "广播";
             this.btnChatRoom.UseVisualStyleBackColor = true;
             this.btnChatRoom.Click += new System.EventHandler(this.btnChatRoom_Click);
             // 
             // btnChat
             // 
-            this.btnChat.Location = new System.Drawing.Point(74, 443);
+            this.btnChat.Location = new System.Drawing.Point(54, 440);
             this.btnChat.Name = "btnChat";
-            this.btnChat.Size = new System.Drawing.Size(51, 23);
+            this.btnChat.Size = new System.Drawing.Size(40, 23);
             this.btnChat.TabIndex = 2;
             this.btnChat.Text = "聊天";
             this.btnChat.UseVisualStyleBackColor = true;
@@ -78,19 +79,30 @@
             // 
             // btnQuit
             // 
-            this.btnQuit.Location = new System.Drawing.Point(137, 443);
+            this.btnQuit.Location = new System.Drawing.Point(154, 440);
             this.btnQuit.Name = "btnQuit";
-            this.btnQuit.Size = new System.Drawing.Size(51, 23);
+            this.btnQuit.Size = new System.Drawing.Size(40, 23);
             this.btnQuit.TabIndex = 3;
             this.btnQuit.Text = "退出";
             this.btnQuit.UseVisualStyleBackColor = true;
             this.btnQuit.Click += new System.EventHandler(this.btnQuit_Click);
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Location = new System.Drawing.Point(104, 440);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(40, 23);
+            this.btnRefresh.TabIndex = 4;
+            this.btnRefresh.Text = "刷新";
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // Main
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(201, 480);
+            this.Controls.Add(this.btnRefresh);
             this.Controls.Add(this.btnQuit);
             this.Controls.Add(this.btnChat);
             this.Controls.Add(this.btnChatRoom);
@@ -100,7 +112,7 @@
             this.MinimizeBox = false;
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "主界面";
+            this.Text = "网络聊天";
             this.Load += new System.EventHandler(this.Main_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -114,5 +126,6 @@
         private System.Windows.Forms.Button btnChat;
         private System.Windows.Forms.Button btnQuit;
         private System.Windows.Forms.ListBox lbxOnline;
+        private System.Windows.Forms.Button btnRefresh;
     }
 }
