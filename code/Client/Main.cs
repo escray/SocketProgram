@@ -25,6 +25,9 @@ namespace Client
         private int maxPacket = 1024;
         private Thread receiveThread;
 
+        private Chat chat;        
+        
+
         public NetworkStream Stream { get; set; }
         public string UserName { get; set; }
         public string ServerSocket { get; set; }
@@ -63,12 +66,15 @@ namespace Client
         // Chat Room
         private void btnChatRoom_Click(object sender, EventArgs e)
         {
-            Chat chat = new Chat();
-            chat.Stream = Stream;
-            chat.UserName = UserName;
-            chat.ChatType = ChatType.Public;
-            chat.ReceiveName = "PUBLIC";
-            chat.Text = "聊天室";
+            chat = new Chat
+                                 {
+                                     ReceiveName = "PUBLIC",
+                                     Text = @"广播: " + UserName + @" -> all",
+                                     ChatType = ChatType.Public,
+                                     Stream = Stream,
+                                     UserName = UserName
+                                 };
+
             chat.Show();
         }
 
@@ -82,22 +88,26 @@ namespace Client
                 MessageBox.Show("请选择一个接收者！", "发送消息", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-            Chat chat = new Chat
-                            {
-                                Stream = Stream,
-                                UserName = UserName,
-                                ChatType = ChatType.Private,
-                                Text = "私聊",
-                                ReceiveName = lbxOnline.SelectedItem.ToString()
-                            };
-
+            chat = new Chat
+                                {
+                                    ChatType = ChatType.Private,
+                                    Text = @"聊天: " + UserName + @" -> " + lbxOnline.SelectedItem,
+                                    ReceiveName = lbxOnline.SelectedItem.ToString(),
+                                    Stream = Stream,
+                                    UserName = UserName
+                                };
             chat.Show();
         }
 
         private void Main_Load(object sender, EventArgs e)
         {
-            Text +=  "\t" + UserName;
+            Text +=  UserName;
 
+            
+            
+
+            receiveThread = new Thread(ReceiveFreshMessage);
+            receiveThread.Start();
 
         }
 
@@ -108,7 +118,8 @@ namespace Client
                 byte[] bytes = new byte[maxPacket];
                 Stream.Read(bytes, 0, bytes.Length);
 
-                if (Encoding.Unicode.GetString(bytes).TrimEnd('\0').Equals("cmd::ResponseList"))
+                string receiveMsg = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
+                if (receiveMsg.Equals("cmd::ResponseList"))
                 {
                     byte[] onlineList = new byte[maxPacket];
                     int count = Stream.Read(onlineList, 0, onlineList.Length);
@@ -135,7 +146,11 @@ namespace Client
                 }
                 else
                 {
-                    Stream.Write(bytes, 0, bytes.Length);
+                    if (chat != null)
+                    {
+                        chat.DisplayMessage(receiveMsg);
+                    }
+                    
                 }
             }
         }
@@ -144,11 +159,6 @@ namespace Client
         {
             string refreshRequire = "cmd::RequestList";
             Stream.Write(Encoding.Unicode.GetBytes(refreshRequire), 0, Encoding.Unicode.GetBytes(refreshRequire).Length);
-
-            receiveThread = new Thread(ReceiveFreshMessage);
-            receiveThread.Start();
         }
-
-
     }
 }

@@ -1,14 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Net.Sockets;
-using System.Runtime.Serialization;
-using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -34,7 +25,11 @@ namespace Client
 
         private Thread receiveThread;
        
-
+        public void DisplayMessage(string msg)
+        {
+            rtbMessageDisplay.AppendText(msg);
+            rtbMessageDisplay.ScrollToCaret();
+        }
 
         private void btnQuit_Click(object sender, EventArgs e)
         {
@@ -80,24 +75,6 @@ namespace Client
 
         private void Chat_Load(object sender, EventArgs e)
         {
-            Text +=  "\t" + UserName;
-
-            receiveThread = new Thread(ReceiveMessage);
-            receiveThread.Start();
-        }
-
-        private void ReceiveMessage()
-        {
-            while (true)
-            {
-                byte[] bytes = new byte[maxPacket];
-                Stream.Read(bytes, 0, bytes.Length);
-
-                string msg = Encoding.Unicode.GetString(bytes);
-
-                rtbMessageDisplay.AppendText(msg);
-                rtbMessageDisplay.SelectionStart = rtbMessageDisplay.Text.Length;
-            }
         }
     }
 }

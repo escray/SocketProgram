@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -34,7 +29,7 @@ namespace Client
 
         private void Login_Load(object sender, EventArgs e)
         {
-            tbxServer.Text = "127.0.0.1";
+            tbxServer.Text = "219.224.167.250";
             tbxUserName.Focus();
         }
 
@@ -80,9 +75,16 @@ namespace Client
             byte[] buffer = new byte[512];
             stream.Read(buffer, 0, buffer.Length);
             string connResult = Encoding.Unicode.GetString(buffer).TrimEnd('\0');
+
+
+
             if (connResult.Equals("cmd::Failed"))
             {
                 MessageBox.Show("用户名已被使用", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (connResult.Equals("cmd::Successful"))
+            {
+                MessageBox.Show("登陆成功", "提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
 
             

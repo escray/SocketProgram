@@ -30,7 +30,7 @@ namespace Server
         /// <summary>
         /// 保存所有客户端会话的字典表
         /// </summary>
-        private Dictionary<string, TcpClient> allUser = new Dictionary<string, TcpClient>(); 
+        private Dictionary<string, Socket> allUser = new Dictionary<string, Socket>(); 
 
         public Server()
         {
@@ -59,33 +59,37 @@ namespace Server
 
         private void SocketListenerConnect()
         {
-            var bytes = new byte[maxPacket];
             while (true)
             {
+                var bytes = new byte[maxPacket];
                 try
                 {
-                    var client = tcpListener.AcceptTcpClient();
-                    var socket = client.Client;
+                    var socket = tcpListener.AcceptSocket();
+                    //var socket = client.Client;
                     socket.Receive(bytes);
                     userName = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
+
+                    // debug
+                    Display("send: " + userName);
 
                     if (allUser.Count != 0 && allUser.ContainsKey(userName))
                     {
                         socket.Send(Encoding.Unicode.GetBytes("cmd::Failed"));
-                    }
-                    else
-                    {
-                        socket.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
+                        continue;
                     }
 
-                    allUser.Add(userName, client);
+                    socket.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
+
+                    allUser.Add(userName, socket);
 
                     string log = string.Format("[系统消息]新用户 {0} 在 {1} 已连接，当前在线人数： {2}", userName, DateTime.Now, allUser.Count);
 
-                    //Display(log);
+                    
+                    Display(log);
+                    SendMessageToAll(userName, log);
                     var clientThread = new Thread(MessageTransfer);
                     clientThread.Start(userName);
-                    SendMessageToAll(userName, log);
+
                 }
                 catch (Exception)
                 {
@@ -101,11 +105,10 @@ namespace Server
 
         private void SendMessageToAll(string userName, string log)
         {
-            Display(log);
             foreach (var pair in allUser.Where(pair => pair.Key != userName))
             {
                 //pair.Value.Send(Encoding.Unicode.GetBytes(log));
-                pair.Value.Client.Send(Encoding.Unicode.GetBytes(log));
+                pair.Value.Send(Encoding.Unicode.GetBytes(log));
             }
         }
 
@@ -116,48 +119,60 @@ namespace Server
             {
                 return;
             }
-            Socket clientSocket = allUser[key].Client;
+            Socket clientSocket = allUser[key];
             while (true)
             {
                 try
                 {
+                    // receive first datagram
                     byte[]  bytes = new byte[maxPacket];
                     clientSocket.Receive(bytes);
                     string receive = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
+                    
+                    Display("first datagram: " + receive);
+
                     if (receive.StartsWith("cmd::RequestLogout"))
                     {
                         allUser.Remove(key);
-
                         string log = string.Format("[系统消息]用户 {0} 在 {1} 已断开。当前在线人数：{2}", key, DateTime.Now, allUser.Count);
+                        
+                        Display(log);
 
                         SendMessageToAll(key, log);
-
                         Thread.CurrentThread.Abort();
                     }
-                    if (receive.StartsWith("cmd::RequestList"))
+                    else if (receive.StartsWith("cmd::RequestList"))
                     {
                         var onlineUser = SerializeOnlineUserList();
                         clientSocket.Send(Encoding.Unicode.GetBytes("cmd::ResponseList"));
                         clientSocket.Send(onlineUser);
                         continue;
                     }
-                    if (receive.StartsWith("cmd::BroadCast"))
+                    else if (receive.StartsWith("cmd::BroadCast"))
                     {
                         clientSocket.Receive(bytes);
-                        SendMessageToAll(key, Encoding.Unicode.GetString(bytes));
+                        string broadcastMsg = Encoding.Unicode.GetString(bytes);
+
+                        Display("BroadCast: " + broadcastMsg);
+
+                        SendMessageToAll(key, broadcastMsg);
                         continue;
                     }
                     // second datagram
                     // here has a question fro transfer message 2012-5-24 12:14
                     clientSocket.Receive(bytes);
+                    //debug
+                    Display("second datagram: " + Encoding.Unicode.GetString(bytes));
+                    
                     try
                     {
                         // 转发
-                        var receiveSocket = allUser[receive].Client;
-                        if (receiveSocket != null && receiveSocket.Connected)
-                        {
+                        var receiveSocket = allUser[receive];
+                        //if (receiveSocket != null && receiveSocket.Connected)
+                        //{
+                            //clientSocket.Send(bytes);
                             receiveSocket.Send(bytes);
-                        }
+                        //}
                     }
                     catch (Exception)
                     {
@@ -172,6 +187,7 @@ namespace Server
                         allUser.Remove(key);
                     }
                     string log = string.Format("[系统消息]用户 {0} 的客户端在 {1} 意外终止！当前在线人数：{2}", key, DateTime.Now, allUser.Count);
+                    Display("ErrorLog: " + log);
                     SendMessageToAll(string.Empty, log);
                     Thread.CurrentThread.Abort();
                 }
@@ -207,7 +223,7 @@ namespace Server
 
             foreach (var client in allUser.Values)
             {
-                client.Client.Shutdown(SocketShutdown.Both);
+                client.Shutdown(SocketShutdown.Both);
                 client.Close();
             }
             allUser.Clear();
@@ -292,7 +308,8 @@ namespace Server
                 lbxServerDisplay.ClearSelected();
             }
 
-            
+            lbxServerDisplay.SelectedIndex = lbxServerDisplay.Items.Count - 1;
+            lbxServerDisplay.ClearSelected();
             //lbxServerDisplay.Items.Add(message);
         }
 
