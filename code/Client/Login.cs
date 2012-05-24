@@ -29,7 +29,7 @@ namespace Client
 
         private void Login_Load(object sender, EventArgs e)
         {
-            tbxServer.Text = "219.224.167.250";
+            tbxServer.Text = "127.0.0.1";
             tbxUserName.Focus();
         }
 

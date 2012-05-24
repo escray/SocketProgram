@@ -70,6 +70,7 @@ namespace Client
             
 
             rtbMessageDisplay.AppendText(localmsg);
+            rtbMessageDisplay.ScrollToCaret();
             tbxSendMessage.Clear();
         }
 
