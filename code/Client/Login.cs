@@ -90,7 +90,7 @@ namespace Client
 
             string serverSocket = ServerIPAddress + ":" + port;
 
-            Main mainForm = new Main(UserName, ServerIPAddress, stream);
+            Main mainForm = new Main(UserName, serverSocket, stream);
 
             mainForm.Owner = this;
             Hide();

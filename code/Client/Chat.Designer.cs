@@ -33,9 +33,9 @@
             this.btnSend = new System.Windows.Forms.Button();
             this.btnQuit = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tbxSendMessage = new System.Windows.Forms.TextBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.richTextBox1 = new System.Windows.Forms.RichTextBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.rtbMessageDisplay = new System.Windows.Forms.RichTextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -85,6 +85,7 @@
             this.btnSend.TabIndex = 0;
             this.btnSend.Text = "发送";
             this.btnSend.UseVisualStyleBackColor = true;
+            this.btnSend.Click += new System.EventHandler(this.btnSend_Click);
             // 
             // btnQuit
             // 
@@ -99,7 +100,7 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.textBox1);
+            this.groupBox1.Controls.Add(this.tbxSendMessage);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(3, 184);
             this.groupBox1.Name = "groupBox1";
@@ -108,9 +109,18 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "发送信息";
             // 
+            // tbxSendMessage
+            // 
+            this.tbxSendMessage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbxSendMessage.Location = new System.Drawing.Point(3, 17);
+            this.tbxSendMessage.Multiline = true;
+            this.tbxSendMessage.Name = "tbxSendMessage";
+            this.tbxSendMessage.Size = new System.Drawing.Size(460, 85);
+            this.tbxSendMessage.TabIndex = 0;
+            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.richTextBox1);
+            this.groupBox2.Controls.Add(this.rtbMessageDisplay);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
@@ -119,23 +129,14 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "对话信息";
             // 
-            // richTextBox1
+            // rtbMessageDisplay
             // 
-            this.richTextBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.richTextBox1.Location = new System.Drawing.Point(3, 17);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(460, 155);
-            this.richTextBox1.TabIndex = 0;
-            this.richTextBox1.Text = "";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox1.Location = new System.Drawing.Point(3, 17);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(460, 85);
-            this.textBox1.TabIndex = 0;
+            this.rtbMessageDisplay.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.rtbMessageDisplay.Location = new System.Drawing.Point(3, 17);
+            this.rtbMessageDisplay.Name = "rtbMessageDisplay";
+            this.rtbMessageDisplay.Size = new System.Drawing.Size(460, 155);
+            this.rtbMessageDisplay.TabIndex = 0;
+            this.rtbMessageDisplay.Text = "";
             // 
             // Chat
             // 
@@ -145,6 +146,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "Chat";
             this.Text = "Chat";
+            this.Load += new System.EventHandler(this.Chat_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
@@ -162,7 +164,7 @@
         private System.Windows.Forms.Button btnQuit;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.RichTextBox richTextBox1;
+        private System.Windows.Forms.TextBox tbxSendMessage;
+        private System.Windows.Forms.RichTextBox rtbMessageDisplay;
     }
 }

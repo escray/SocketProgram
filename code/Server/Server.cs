@@ -39,6 +39,7 @@ namespace Server
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            btnStart.Enabled = false;
             TcpListenerStart();
             //SocketListener();
         }
@@ -50,40 +51,79 @@ namespace Server
             tcpListener = new TcpListener(GetServerIPAddress(), port);
             tcpListener.Start();
             Display("服务器启动，开始监听......");
-            while (true)
-            {
-                //var userName = AcceptSocket();
-                var init = new Thread(AcceptSocket);
-                init.Start();
-                var clientThread = new Thread(MessageTransfer);
-                clientThread.Start(userName);
-                //SendMessageToAll(userName, log);
-            }
+
+            var connThread = new Thread(SocketListenerConnect);
+            connThread.Start();
         }
 
-        private void AcceptSocket()
+        private void SocketListenerConnect()
         {
             var bytes = new byte[maxPacket];
+            while (true)
+            {
+                try
+                {
+                    var client = tcpListener.AcceptSocket();
+                    client.Receive(bytes);
+                    userName = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
+
+                    if (allUser.Count != 0 && allUser.ContainsKey(userName))
+                    {
+                        client.Send(Encoding.Unicode.GetBytes("cmd::Failed"));
+                    }
+                    else
+                    {
+                        client.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
+                    }
+
+                    allUser.Add(userName, client);
+
+                    string log = string.Format("[系统消息]新用户 {0} 在 {1} 已连接，当前在线人数： {2}", userName, DateTime.Now, allUser.Count);
+                    Display(log);
+
+                    var clientThread = new Thread(MessageTransfer);
+                    clientThread.Start(userName);
+                    SendMessageToAll(userName, log);
+                }
+                catch (Exception)
+                {
+                    
+                    
+                }
+            }
             // AcceptTcpClient()
             //var client = tcpListener.AcceptTcpClient();
-            var client = tcpListener.AcceptSocket();
-            client.Receive(bytes);
-            userName = Encoding.Unicode.GetString(bytes).TrimEnd('\0');
+            
+            
+        }
 
-            if (allUser.Count != 0 && allUser.ContainsKey(userName))
+
+        private void ListenerClientConnect()
+        {
+            TcpClient client;
+            while (true)
             {
-                client.Send(Encoding.Unicode.GetBytes("cmd::Failed"));
-            }
-            else
-            {
-                client.Send(Encoding.Unicode.GetBytes("cmd::Successful"));
-            }
+                try
+                {
+                    client = tcpListener.AcceptTcpClient();
+                }
+                catch (Exception)
+                {
+                    break;
+                }
 
-            allUser.Add(userName, client);
 
-            string log = string.Format("[系统消息]新用户 {0} 在 {1} 已连接，当前在线人数： {2}", userName, DateTime.Now, allUser.Count);
-            Display(log);
-            //return userName;
+                var netStream = client.GetStream();
+                if (netStream.CanRead)
+                {
+                    byte[] bytes = new byte[client.ReceiveBufferSize];
+                    netStream.Read(bytes, 0, client.ReceiveBufferSize);
+                    userName = Encoding.Unicode.GetString(bytes);
+                }
+
+                var clientThread = new Thread(MessageTransfer);
+                clientThread.Start(userName);
+            }
         }
 
         private void SendMessageToAll(string userName, string log)

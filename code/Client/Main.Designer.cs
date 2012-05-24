@@ -64,6 +64,7 @@
             this.btnChatRoom.TabIndex = 1;
             this.btnChatRoom.Text = "聊天室";
             this.btnChatRoom.UseVisualStyleBackColor = true;
+            this.btnChatRoom.Click += new System.EventHandler(this.btnChatRoom_Click);
             // 
             // btnChat
             // 
@@ -73,6 +74,7 @@
             this.btnChat.TabIndex = 2;
             this.btnChat.Text = "聊天";
             this.btnChat.UseVisualStyleBackColor = true;
+            this.btnChat.Click += new System.EventHandler(this.btnChat_Click);
             // 
             // btnQuit
             // 
@@ -99,6 +101,7 @@
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "主界面";
+            this.Load += new System.EventHandler(this.Main_Load);
             this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
